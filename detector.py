@@ -8,9 +8,7 @@ Path("training").mkdir(exist_ok=True)
 Path("output").mkdir(exist_ok=True)
 Path("validation").mkdir(exist_ok=True)
 
-def encode_known_faces(
-    model: str = "hog", encodings_location: Path = DEFAULT_ENCODINGS_PATH
-) -> None:
+def encode_known_faces(model: str = "hog", encodings_location: Path = DEFAULT_ENCODINGS_PATH) -> None:
     names = []
     encodings = []
 
@@ -25,7 +23,7 @@ def encode_known_faces(
             names.append(name)
             encodings.append(encoding)
 
-    name_encodings = {"names": names, "encoginds": encoginds}
+    name_encodings = {"names": names, "encodings": encodings}
     with encodings_location.open(mode="wb") as f:
         pickle.dump(name_encodings, f)
 

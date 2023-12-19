@@ -24,3 +24,9 @@ def encode_known_faces(
         for encoding in face_encodings:
             names.append(name)
             encodings.append(encoding)
+
+    name_encodings = {"names": names, "encoginds": encoginds}
+    with encodings_location.open(mode="wb") as f:
+        pickle.dump(name_encodings, f)
+
+encode_known_faces()

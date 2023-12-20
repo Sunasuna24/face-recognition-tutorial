@@ -10,9 +10,6 @@ Path("output").mkdir(exist_ok=True)
 Path("validation").mkdir(exist_ok=True)
 
 
-recognize_faces("unknown.jpg")
-
-
 def encode_known_faces(model: str = "hog", encodings_location: Path = DEFAULT_ENCODINGS_PATH) -> None:
     names = []
     encodings = []
@@ -56,3 +53,6 @@ def _recognize_face(unknown_encoding, loaded_encodings):
     )
     if votes:
         return votes.most_common(1)[0][0]
+
+
+recognize_faces("unknown.jpg")

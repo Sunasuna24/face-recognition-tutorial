@@ -5,6 +5,8 @@ from collections import Counter
 from PIL import Image, ImageDraw
 
 DEFAULT_ENCODINGS_PATH = Path("output/endodings.pkl")
+BOUNDING_BOX_COLOR = "blue"
+TEXT_COLOR = "white"
 
 Path("training").mkdir(exist_ok=True)
 Path("output").mkdir(exist_ok=True)
@@ -61,5 +63,11 @@ def _recognize_face(unknown_encoding, loaded_encodings):
     if votes:
         return votes.most_common(1)[0][0]
 
+def _display_face(draw, bounding_box, name):
+    top, right, bottom, left = bounding_box
+    draw.rectangle(((left, top), (right, bottom)), outline=BOUNDING_BOX_COLOR)
+    text_left, text_top, text_right, text_bottom = draw.textbbox((left, bottom), name)
+    draw.rectangle(((text_left, text_top), (text_right, text_bottom)), fill="blue", outline="blue")
+    draw.text((text_left, text_top), name, fill="white")
 
 recognize_faces("unknown/unknown.jpg")

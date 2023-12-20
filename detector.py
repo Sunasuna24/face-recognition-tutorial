@@ -1,12 +1,17 @@
 from pathlib import Path
 import face_recognition
 import pickle
+from collections import Counter
 
 DEFAULT_ENCODINGS_PATH = Path("output/endodings.pkl")
 
 Path("training").mkdir(exist_ok=True)
 Path("output").mkdir(exist_ok=True)
 Path("validation").mkdir(exist_ok=True)
+
+
+recognize_faces("unknown.jpg")
+
 
 def encode_known_faces(model: str = "hog", encodings_location: Path = DEFAULT_ENCODINGS_PATH) -> None:
     names = []
@@ -40,3 +45,14 @@ def recognize_faces(image_location: str, model: str = "hog", encodings_location:
         if not name:
             name = "Unknown"
         print(name, bounding_box)
+
+def _recognize_face(unknown_encoding, loaded_encodings):
+    boolean_matches = face_recognition.compare_faces(loaded_encodings["encodings"], unknown_encoding)
+
+    votes = Counter(
+        name
+        for match, name in zip(boolean_matches, loaded_encodings["names"])
+        if match
+    )
+    if votes:
+        return votes.most_common(1)[0][0]

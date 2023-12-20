@@ -32,5 +32,7 @@ def recognize_faces(image_location: str, model: str = "hog", encodings_location:
         loaded_encodings = pickle.load(f)
 
     input_image = face_recognition.load_image_file(image_location)
+    input_face_locations = face_recognition.face_locations(input_image, model=mode)
+    input_face_encodings = face_recognition.face_encodings(input_image, input_face_locations)
 
 # encode_known_faces()

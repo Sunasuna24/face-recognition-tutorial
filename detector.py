@@ -70,4 +70,10 @@ def _display_face(draw, bounding_box, name):
     draw.rectangle(((text_left, text_top), (text_right, text_bottom)), fill="blue", outline="blue")
     draw.text((text_left, text_top), name, fill="white")
 
-recognize_faces("unknown/unknown.jpg")
+def validate(model: str = "hog"):
+    for filepath in Path("validation").rglob("*"):
+        if filepath.is_file():
+            recognize_faces(image_location=str(filepath.absolute()), model=model)
+
+# recognize_faces("unknown/unknown.jpg")
+validate()

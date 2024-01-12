@@ -4,7 +4,7 @@ import pickle
 from collections import Counter
 from PIL import Image, ImageDraw
 
-DEFAULT_ENCODINGS_PATH = Path("output/endodings.pkl")
+DEFAULT_ENCODINGS_PATH = Path("output/encodings.pkl")
 BOUNDING_BOX_COLOR = "blue"
 TEXT_COLOR = "white"
 

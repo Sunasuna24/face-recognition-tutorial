@@ -106,6 +106,10 @@ def _display_face(draw, bounding_box, name):
     draw.rectangle(((text_left, text_top), (text_right, text_bottom)), fill="blue", outline="blue")
     draw.text((text_left, text_top), name, fill="white")
 
+"""validate関数
+大まかに言うと、正解が分かっている、モデルが未学習のデータを学習モデルを与えることで、モデルの性能をテストすること。
+/validationディレクトリにある全ての画像を上記で作成したrecognize_faces関数に入れて検証させる。
+"""
 def validate(model: str = "hog"):
     for filepath in Path("validation").rglob("*"):
         if filepath.is_file():

@@ -1,12 +1,12 @@
-from pathlib import Path    # スタンダードなライブラリ
-import face_recognition     # サードパーティーのライブラリ
-import pickle               # スタンダードなライブラリ
-from collections import Counter
-from PIL import Image, ImageDraw
+from pathlib import Path            # スタンダードなライブラリ
+import face_recognition             # サードパーティーのライブラリ
+import pickle                       # スタンダードなライブラリ
+from collections import Counter     # 最も一致するモデルの投票に用いる
+from PIL import Image, ImageDraw    # PILからImageとImageDrawモジュールをインポート
 
 DEFAULT_ENCODINGS_PATH = Path("output/encodings.pkl")   # デフォルトの向き先
-BOUNDING_BOX_COLOR = "blue"
-TEXT_COLOR = "white"
+BOUNDING_BOX_COLOR = "blue"                             # bouding boxの色（HTMLで一般に用いられる色名を指定）
+TEXT_COLOR = "white"                                    # 注釈の文字色（HTMLで一般に用いられる色名を指定）
 
 Path("training").mkdir(exist_ok=True)   # ディレクトリを作成する
 Path("output").mkdir(exist_ok=True)     # ディレクトリを作成する
@@ -60,8 +60,9 @@ def recognize_faces(image_location: str, model: str = "hog", encodings_location:
     input_face_locations = face_recognition.face_locations(input_image, model=model)            # 未ラベルの画像の顔を検出する
     input_face_encodings = face_recognition.face_encodings(input_image, input_face_locations)   # 未ラベルの画像の顔のエンコーディングを取得する
 
-    pillow_image = Image.fromarray(input_image)
-    draw = ImageDraw.Draw(pillow_image)
+    # 検出したモデルを描画するため
+    pillow_image = Image.fromarray(input_image) # 与えた未ラベルの画像のPillow imageオブジェクトを生成する
+    draw = ImageDraw.Draw(pillow_image)         # それを元に、PillowDrawオブジェクトを生成し、検出した顔の周りにbounding boxを描画する。
 
     # 入力した未ラベルの画像を（for文を通して）過去に作成したエンコーディングの塊に晒して比較する。
     for bounding_box, unknown_encoding in zip(input_face_locations, input_face_encodings):
@@ -74,7 +75,7 @@ def recognize_faces(image_location: str, model: str = "hog", encodings_location:
         _display_face(draw, bounding_box, name)
 
     del draw
-    pillow_image.show()
+    pillow_image.show() # 画像を表示する
 
 """_recognize_face関数
 未ラベルの画像とモデルの両方のエンコーディングを比較して、（もしあれば）一致するモデルを返す
@@ -94,6 +95,10 @@ def _recognize_face(unknown_encoding, loaded_encodings):
     if votes:
         return votes.most_common(1)[0][0]
 
+"""_display_face関数
+検出した顔にbounding boxを描画し、そのbouding boxに検出したモデルの注釈を入れてくれる関数。
+どのモデルとも一致しなかったら、Unknownと注釈する。
+"""
 def _display_face(draw, bounding_box, name):
     top, right, bottom, left = bounding_box
     draw.rectangle(((left, top), (right, bottom)), outline=BOUNDING_BOX_COLOR)

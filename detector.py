@@ -1,33 +1,45 @@
-from pathlib import Path
-import face_recognition
-import pickle
+from pathlib import Path    # スタンダードなライブラリ
+import face_recognition     # サードパーティーのライブラリ
+import pickle               # スタンダードなライブラリ
 from collections import Counter
 from PIL import Image, ImageDraw
 
-DEFAULT_ENCODINGS_PATH = Path("output/encodings.pkl")
+DEFAULT_ENCODINGS_PATH = Path("output/encodings.pkl")   # デフォルトの向き先
 BOUNDING_BOX_COLOR = "blue"
 TEXT_COLOR = "white"
 
-Path("training").mkdir(exist_ok=True)
-Path("output").mkdir(exist_ok=True)
-Path("validation").mkdir(exist_ok=True)
+Path("training").mkdir(exist_ok=True)   # ディレクトリを作成する
+Path("output").mkdir(exist_ok=True)     # ディレクトリを作成する
+Path("validation").mkdir(exist_ok=True) # ディレクトリを作成する
 
 
+"""encode_known_faces関数
+トレーニング用の画像を読み込んで、画像から顔を検出、それぞれの画像についての名前-エンコーディングのdictiroaryを作成する関数。
+
+引数1: string、モデルの方。HOG
+引数2: エンコーディングした情報を格納するパス。DEFAULT_ENCODINGS_PATH
+"""
 def encode_known_faces(model: str = "hog", encodings_location: Path = DEFAULT_ENCODINGS_PATH) -> None:
     names = []
     encodings = []
 
+    # /trainingディレクトリを見る
     for filepath in Path("training").glob("*/*"):
         name = filepath.parent.name
-        image = face_recognition.load_image_file(filepath)
+        image = face_recognition.load_image_file(filepath)  # /trainingディレクトリ内の画像ファイルを読み込む
 
-        face_locations = face_recognition.face_locations(image, model=model)
-        face_encodings = face_recognition.face_encodings(image, face_locations)
+        face_locations = face_recognition.face_locations(image, model=model)    # 画像から顔を検出する
+        face_encodings = face_recognition.face_encodings(image, face_locations) # 検出した顔のエンコーディングを取得する
+        """face_encodings変数の中身の説明
+        簡単に言うと、数字の配列。顔の特徴を表す。
+        """
 
+        # face_encodingsというリストにディレクトリ名(=ファイル名？)とエンコーディングを追加する。
         for encoding in face_encodings:
             names.append(name)
             encodings.append(encoding)
 
+    # pickleを使って、ファイル名とエンコード情報を保存して、encodings.pklというファイルを作成する
     name_encodings = {"names": names, "encodings": encodings}
     with encodings_location.open(mode="wb") as f:
         pickle.dump(name_encodings, f)

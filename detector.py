@@ -125,9 +125,6 @@ def validate(model: str = "hog"):
         if filepath.is_file():
             recognize_faces(image_location=str(filepath.absolute()), model=model)
 
-# recognize_faces("unknown/unknown.jpg")
-# validate()
-
 if __name__ == "__main__":
     if args.train:
         encode_known_faces(model=args.m)
